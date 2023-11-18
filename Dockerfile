@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:edge
 
 RUN adduser -D unbound -G wheel
 RUN apk add --no-cache unbound drill doas
