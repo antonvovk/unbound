@@ -20,8 +20,8 @@ RUN unbound-anchor -v -a "/usr/local/etc/unbound/root.key" || logger "Please che
 RUN unbound-checkconf
 RUN unbound -V
 
-EXPOSE 53 53/udp
-EXPOSE 53 53/tcp
+EXPOSE 53/tcp
+EXPOSE 53/udp
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD drill @127.0.0.1 cloudflare.com || exit 1
 
