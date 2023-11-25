@@ -6,11 +6,11 @@ RUN echo 'permit nopass :wheel' > /etc/doas.d/doas.conf
 
 COPY unbound.conf /etc/unbound/unbound.conf
 RUN mkdir -p /usr/local/etc/unbound/
-RUN mkdir -p /var/log/unbound
+RUN touch /etc/unbound/unbound.log
 
 RUN chown unbound /etc/unbound
 RUN chown unbound /usr/local/etc/unbound/
-RUN chown unbound /var/log/unbound
+RUN chown unbound /etc/unbound/unbound.log
 
 RUN wget -S https://www.internic.net/domain/named.cache -O /etc/unbound/root.hints
 
