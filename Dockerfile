@@ -7,10 +7,13 @@ RUN echo 'permit nopass :wheel' > /etc/doas.d/doas.conf
 
 COPY init.sh /init.sh
 COPY unbound.conf /etc/unbound/unbound.conf
-COPY unbound.log /var/log/unbound/unbound.log
 COPY unbound_munin_ /etc/unbound/unbound_munin_
 COPY unbound-plugin.conf /etc/munin/plugin-conf.d/unbound-plugin.conf
-COPY munin-node.log /var/log/munin/munin-node.log
+COPY munin.conf /etc/munin/munin.conf
+
+RUN mkdir -p /var/log/unbound && touch /var/log/unbound/unbound.log
+RUN mkdir -p /var/log/munin && touch /var/log/munin/munin-node.log
+RUN mkdir -p /var/cache/munin/www
 
 RUN ln -s /etc/unbound/unbound_munin_ /etc/munin/plugins/unbound_munin_hits
 RUN ln -s /etc/unbound/unbound_munin_ /etc/munin/plugins/unbound_munin_queue
@@ -26,6 +29,8 @@ RUN chown -R unbound:unbound /etc/unbound
 RUN chown -R unbound:unbound /var/log/unbound
 RUN chown -R munin:munin /etc/munin
 RUN chown -R munin:munin /var/log/munin
+RUN chown -R munin:munin /var/lib/munin
+RUN chown -R munin:munin /var/cache/munin
 
 RUN wget -S https://www.internic.net/domain/named.cache -O /etc/unbound/root.hints
 
