@@ -1,5 +1,5 @@
 #!/bin/sh
 
-unbound
-doas munin-run unbound_munin_hits
-tail -f /etc/unbound/unbound.log
+doas -u unbound unbound
+doas munin-node
+tail -f /var/log/unbound/unbound.log
