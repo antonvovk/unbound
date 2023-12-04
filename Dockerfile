@@ -1,28 +1,37 @@
 FROM alpine:edge
 
-RUN adduser -D unbound -G wheel
 RUN apk add --no-cache unbound drill doas munin munin-node
+
+RUN adduser -D alpine -G wheel
 RUN echo 'permit nopass :wheel' > /etc/doas.d/doas.conf
 
 COPY init.sh /init.sh
 COPY unbound.conf /etc/unbound/unbound.conf
+COPY unbound.log /etc/unbound/unbound.log
 COPY unbound_munin_ /etc/unbound/unbound_munin_
-COPY plugins.conf /etc/munin/plugin-conf.d/plugins.conf
-RUN mkdir -p /usr/local/etc/unbound/
-RUN touch /etc/unbound/unbound.log
+COPY unbound-plugin.conf /etc/munin/plugin-conf.d/unbound-plugin.conf
 
 RUN ln -s /etc/unbound/unbound_munin_ /etc/munin/plugins/unbound_munin_hits
-RUN chown unbound /etc/unbound
-RUN chown unbound /usr/local/etc/unbound/
-RUN chown unbound /etc/unbound/unbound.log
+RUN ln -s /etc/unbound/unbound_munin_ /etc/munin/plugins/unbound_munin_queue
+RUN ln -s /etc/unbound/unbound_munin_ /etc/munin/plugins/unbound_munin_memory
+RUN ln -s /etc/unbound/unbound_munin_ /etc/munin/plugins/unbound_munin_by_type
+RUN ln -s /etc/unbound/unbound_munin_ /etc/munin/plugins/unbound_munin_by_class
+RUN ln -s /etc/unbound/unbound_munin_ /etc/munin/plugins/unbound_munin_by_opcode
+RUN ln -s /etc/unbound/unbound_munin_ /etc/munin/plugins/unbound_munin_by_rcode
+RUN ln -s /etc/unbound/unbound_munin_ /etc/munin/plugins/unbound_munin_by_flags
+RUN ln -s /etc/unbound/unbound_munin_ /etc/munin/plugins/unbound_munin_histogram
+
+RUN chown -R unbound:unbound /etc/unbound
+RUN chown -R munin:munin /etc/munin
 
 RUN wget -S https://www.internic.net/domain/named.cache -O /etc/unbound/root.hints
 
-USER unbound
-
-RUN unbound-anchor -v -a "/usr/local/etc/unbound/root.key" || logger "Please check root.key"
+RUN unbound-anchor -v -a "/etc/unbound/root.key" || logger "Please check root.key"
 RUN unbound-checkconf
 RUN unbound -V
+
+# TODO Uncomment
+#USER alpine
 
 EXPOSE 53/tcp
 EXPOSE 53/udp
