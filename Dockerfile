@@ -10,6 +10,7 @@ COPY unbound.conf /etc/unbound/unbound.conf
 COPY unbound_munin_ /etc/unbound/unbound_munin_
 COPY unbound-plugin.conf /etc/munin/plugin-conf.d/unbound-plugin.conf
 COPY munin.conf /etc/munin/munin.conf
+COPY nginx.conf /etc/nginx/http.d/default.conf
 
 RUN touch /var/log/crond.log
 RUN touch /var/log/unbound.log
@@ -38,13 +39,13 @@ RUN wget -S https://www.internic.net/domain/named.cache -O /etc/unbound/root.hin
 RUN unbound-anchor -v -a "/etc/unbound/root.key" || logger "Please check root.key"
 RUN unbound-checkconf
 RUN unbound -V
-# todo uncomment
-#RUN nginx -t
+RUN nginx -t
 
 USER alpine
 
 EXPOSE 53/tcp
 EXPOSE 53/udp
+EXPOSE 80
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD drill @127.0.0.1 cloudflare.com || exit 1
 
