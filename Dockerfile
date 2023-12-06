@@ -1,6 +1,6 @@
 FROM alpine:edge
 
-RUN apk add --no-cache unbound drill doas munin munin-node nginx
+RUN apk add --no-cache unbound drill doas munin munin-node nginx ttf-opensans
 
 RUN echo "*       *       *       *       *       run-parts /etc/periodic/1min" >> /etc/crontabs/root
 RUN adduser -D alpine -G wheel
