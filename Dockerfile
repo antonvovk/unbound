@@ -40,13 +40,10 @@ RUN chown -R munin:munin /var/lib/munin-node
 
 RUN wget -S https://www.internic.net/domain/named.cache -O /etc/unbound/root.hints
 
-RUN doas -u unbound unbound-anchor -v -a "/etc/unbound/root.key" || logger "Please check root.key"
-RUN doas -u unbound unbound-checkconf
-RUN doas -u unbound unbound -V
-RUN doas -u nginx nginx -t
-
-RUN chown -R nginx:nginx /var/lib/nginx
-RUN chown -R nginx:nginx /var/log/nginx
+RUN unbound-anchor -v -a "/etc/unbound/root.key" || logger "Please check root.key"
+RUN unbound-checkconf
+RUN unbound -V
+RUN nginx -t
 
 USER alpine
 
