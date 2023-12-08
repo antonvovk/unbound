@@ -1,4 +1,4 @@
 #!/bin/sh
 
-doas -u unbound unbound
+doas unbound
 tail -f /var/log/unbound/unbound.log
